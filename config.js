@@ -4,7 +4,7 @@ const CONFIG = {
             title: "🇨🇾 Cyprus residence days calculator for a citizenship application",
             description: "Calculate the days of your residence in Cyprus for the M127 application, and print the application forms",
             disclaimer1: "🔒 Privacy notice: this page works offline and doesn't collect any personal information. All your inputs will be stored in your browser, unless you clean the cookies. Also, you can also save all inputs and upload them later using buttons at the bottom of the page.",
-            disclaimer2: "⚠️ Disclaimer: This tool is for estimation purposes only and does not constitute legal advice. Please consult with a legal professional before applying.",
+            disclaimer2: "⚠️ Disclaimer: This tool is for estimation purposes only and does not constitute legal advice. Please consult with a legal professional before applying. Licensed under Creative Commons Attribution-NonCommercial 4.0 International. Allowed for personal non-commercial use.",
             blocks: {
                 app: "Days calculator", law: "Law Interpretation", trips: "Trips", statement: "Form M127 addendums"
             },
@@ -38,7 +38,7 @@ Addendums to M127 form are based on <a href="https://drive.google.com/file/d/1oT
             title: "🇨🇾 Калькулятор дней на Кипре для подачи на гражданство",
             description: "Вы можете подсчитать дни своего пребывания на Кипре для формы M127 и распечатать приложения к заявлению",
             disclaimer1: "🔒 Конфиденциальность: эта страница работает оффлайн и не собирает никаких личных данных. Вся информация хранится локально в вашем браузере, пока вы не очистите cookies. Также, вы можете сохранить данные в файл и загрузить их позже с помощью кнопок в конце страницы.",
-            disclaimer2: "⚠️ Отказ от ответственности: инструмент предназначен только для оценки в соответствии с публичной информацией и не является юридической консультацией. Пожалуйста, советуйтесь с юристами перед подачей.",
+            disclaimer2: "⚠️ Отказ от ответственности: инструмент предназначен только для оценки в соответствии с публичной информацией и не является юридической консультацией. Пожалуйста, советуйтесь с юристами перед подачей. Для личного некоммерческого использования под лицензией Creative Commons Attribution-NonCommercial 4.0 International.",
             blocks: {
                 app: "Подсчет дней", law: "Трактовка закона", trips: "Поездки", statement: "Приложения к форме M127"
             },
