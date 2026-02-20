@@ -134,7 +134,7 @@ const app = {
         document.getElementById('tot-credit').innerText = totalCred;
         
         const lvl = document.getElementById('inp-level').value;
-        const target = lvl === 'b1' ? 1460 : (lvl === 'high' ? 1095 : 2555);
+        const target = lvl === 'b1' ? 1460 : (lvl === 'a2' ? 1825 : 2555);
         
         // Inject the exact target number into the "wait" string
         let waitText = CONFIG.text[this.lang].status.wait.replace('{target}', target);
