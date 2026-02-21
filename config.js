@@ -16,6 +16,7 @@ Days of absence logic:
     • Strict interpretation: ≤90 days are not subtracted, >90 days - fully subtracted.
     • Latest interpretation: only absence days exceeding 90 are subtracted.
 Count starts backwards from the date of application to an officer to the date of the ACR (receipt from migration).
+By default, the form shows the earliest application date possible, but you can change it to a planned one.
 
 Addendums to M127 form are based on <a href="https://drive.google.com/file/d/1oTmu-PkwiYlrjeLkeiL2DUiDPkm9X-ww/view" target="_blank" style="color: var(--primary); text-decoration: underline;">this temlpate</a>, but you can use your own.`,
             labels: {
@@ -29,7 +30,7 @@ Addendums to M127 form are based on <a href="https://drive.google.com/file/d/1oT
             tripTable: { trip: "Trip", depDate: "Departure date", depPass: "Passport №", depStamp: "Stamp page", retDate: "Return date", retPass: "Passport №", retStamp: "Stamp page", daysAway: "Days away" },
             buttons: { generate: "Generate statements", save: "Save data", load: "Load data", clear: "Clear all" },
             placeholders: [ "Went to see snow", "Went to see trains", "Couldn't resist a WizzAir sale", "Ate mom's borsch", "Escaped the summer heat", "Went for Uniqlo shopping" ],
-            status: { ready: "✅ You can apply!", wait: "⏳ You need at least {target} days to apply", good: "✅ Less than 90 days", deducted: "⚠️ Absence of more than 90 days is deducted", fail: "❌ >90 absence days in final year not allowed" },
+            status: { ready: "✅ You can apply!", wait: "⏳ You need at least {target} days to apply", good: "☑️ Less than 90 days", deducted: "⚠️ Absence of more than 90 days is deducted", fail: "❌ >90 absence days in final year not allowed" },
             contactDesc: "Please write your questions and suggestions. If this page saved your time, you can support the author.",
             contactBtn: "Contact",
             supportBtn: "Support"
@@ -50,6 +51,7 @@ Addendums to M127 form are based on <a href="https://drive.google.com/file/d/1oT
     • Строгая трактовка: ≤90 дней не вычитаются, >90 дней - вычитаются полностью.
     • Последняя трактовка: вычитаются только дни сверх 90 дней отсутствия.
 Отсчет идет назад от даты подачи документов офицеру до даты ARC (receipt из миграции).
+По умолчанию форма показывает самую раннюю дату подачи, но её можно поменять на планируемую.
 
 Приложения к форме M127 основаны <a href="https://drive.google.com/file/d/1oTmu-PkwiYlrjeLkeiL2DUiDPkm9X-ww/view" target="_blank" style="color: var(--primary); text-decoration: underline;">на шаблоне</a>, вы можете использовать свои.`,
             labels: {
@@ -63,7 +65,7 @@ Addendums to M127 form are based on <a href="https://drive.google.com/file/d/1oT
             tripTable: { trip: "Поездка", depDate: "Дата вылета", depPass: "№ Паспорта", depStamp: "Стр. печати", retDate: "Дата прилета", retPass: "№ Паспорта", retStamp: "Стр. печати", daysAway: "Дней" },
             buttons: { generate: "Сгенерировать заявления", save: "Сохранить данные", load: "Загрузить данные", clear: "Очистить всё" },
             placeholders: [ "Смотрел на снег", "Смотрел на поезда", "Распродажа WizzAir", "Ел на мамин борщ", "Сбежал от летней жары", "Полетел за Uniqlo" ],
-            status: { ready: "✅ Можно подаваться!", wait: "⏳ Вам нужно минимум {target} дней для подачи", good: "✅ Менее 90 дней", deducted: "⚠️ Отсутствие более 90 дней вычитается", fail: "❌ >90 дней отсутствия в последний год не допускается" },
+            status: { ready: "✅ Можно подаваться!", wait: "⏳ Вам нужно минимум {target} дней для подачи", good: "☑️ Менее 90 дней", deducted: "⚠️ Отсутствие более 90 дней вычитается", fail: "❌ >90 дней отсутствия в последний год не допускается" },
             contactDesc: "Пишите по вопросам или предложениям по улучшению. Если эта страница помогла вам сэкономить время, можете поддержать автора.",
             contactBtn: "Написать",
             supportBtn: "Поддержать"

@@ -50,7 +50,7 @@ const app = {
 
         this.populateLevels();
         this.renderTrips();
-        this.calculate();
+        this.updateTable();
     },
 
     populateLevels() {
@@ -62,7 +62,78 @@ const app = {
         if (curr) sel.value = curr;
     },
 
+    // --- NEW SMART DATE ALGORITHM ---
     calculate() {
+        this.autoSetEarliestDate();
+        this.updateTable();
+    },
+
+    autoSetEarliestDate() {
+        const receiptDateStr = document.getElementById('inp-receipt').value;
+        if (!receiptDateStr) return;
+        
+        const receiptDate = new Date(receiptDateStr);
+        const lvl = document.getElementById('inp-level').value;
+        const target = lvl === 'b1' ? 1460 : (lvl === 'a2' ? 1825 : 2555);
+        const isStrict = document.getElementById('inp-strict').checked;
+
+        // Start testing from the mathematically earliest possible date
+        let testDate = new Date(receiptDate);
+        testDate.setDate(testDate.getDate() + target - 1); 
+        
+        // Loop forward day by day until we find an eligible date (limit to prevent infinite loops)
+        for (let i = 0; i < 7300; i++) {
+            if (this.testEligibility(testDate, receiptDate, isStrict, target)) {
+                document.getElementById('inp-app').value = this.formatYMD(testDate);
+                return;
+            }
+            testDate.setDate(testDate.getDate() + 1);
+        }
+    },
+
+    testEligibility(appDate, limitDate, isStrict, target) {
+        let currEnd = new Date(appDate);
+        let totalCred = 0, periodCount = 0;
+
+        while (currEnd > limitDate && periodCount < 10) {
+            let currStart = new Date(currEnd);
+            currStart.setFullYear(currStart.getFullYear() - 1);
+            currStart.setDate(currStart.getDate() + 1);
+            if (currStart < limitDate) currStart = new Date(limitDate);
+
+            const pLength = this.diffDays(currStart, currEnd) + 1;
+            const pAbsence = this.getAbsenceForPeriod(currStart, currEnd);
+            const pCyprus = pLength - pAbsence;
+            
+            let pCredited = 0;
+            if (periodCount === 0) { // Final year rule
+                if (pAbsence > 90) return false; // Fail immediately if > 90 days away in final year
+                pCredited = pCyprus;
+            } else {
+                if (isStrict) {
+                    pCredited = pCyprus;
+                } else {
+                    if (pAbsence <= 90) pCredited = pLength;
+                    else pCredited = pLength - (pAbsence - 90);
+                }
+            }
+            totalCred += pCredited;
+            currEnd = new Date(currStart);
+            currEnd.setDate(currEnd.getDate() - 1);
+            periodCount++;
+        }
+        return totalCred >= target;
+    },
+
+    formatYMD(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    },
+
+    // --- OLD CALCULATE LOGIC MOVED HERE ---
+    updateTable() {
         this.saveLocal();
         const appDateStr = document.getElementById('inp-app').value;
         const receiptDateStr = document.getElementById('inp-receipt').value;
@@ -135,8 +206,6 @@ const app = {
         
         const lvl = document.getElementById('inp-level').value;
         const target = lvl === 'b1' ? 1460 : (lvl === 'a2' ? 1825 : 2555);
-        
-        // Inject the exact target number into the "wait" string
         let waitText = CONFIG.text[this.lang].status.wait.replace('{target}', target);
         document.getElementById('tot-status').innerText = totalCred >= target ? CONFIG.text[this.lang].status.ready : waitText;
     },
@@ -247,7 +316,7 @@ const app = {
             if(data.mp) document.getElementById('inp-mp').value = data.mp;
             if(data.trips) this.trips = data.trips;
             this.renderTrips();
-            this.calculate();
+            this.updateTable();
         }
     },
     clearAll() {
@@ -296,7 +365,7 @@ const app = {
                     this.trips.push({ id: Date.now()+Math.random(), name: cols[0]||'', dep: cols[1]||'', dPass: cols[2]||'', dStamp: cols[3]||'', ret: cols[4]||'', rPass: cols[5]||'', rStamp: cols[6]||'' });
                 }
             });
-            this.renderTrips(); this.calculate(); alert('Data loaded successfully!'); input.value = '';
+            this.renderTrips(); this.updateTable(); alert('Data loaded successfully!'); input.value = '';
         };
         reader.readAsText(file);
     },
