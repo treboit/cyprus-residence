@@ -9,19 +9,22 @@ const CONFIG = {
                 app: "Days calculator", law: "Law Interpretation", trips: "Trips", statement: "Form M127 addendums"
             },
             lawDesc: `This form calculates a period of residence in Cyprus for acquisition of Cypriot citizenship by naturalization (<a href="https://www.gov.cy/moi/en/documents/acquisition-of-cypriot-citizenship-by-naturalization-due-to-years-of-residence-form-m127/" target="_blank" style="color: var(--primary); text-decoration: underline;">see official info</a>).
-There's no offical formula, please critically assess this calculation, and rely on your own understanding. 
+There are different interpretations of the law, so please critically assess the options below, and rely on your own understanding.
 Days of absence logic:
-• A year preceding application: ≤90 days are subtracted, >90 days of absence is not allowed.
-• Prior years: 
-    • Strict interpretation: ≤90 days are not subtracted, >90 days - fully subtracted.
-    • Latest interpretation: only absence days exceeding 90 are subtracted.
-Count starts backwards from the date of application to an officer to the date of the ACR (receipt from migration).
+• Year preceding application: >90 days of absence is not allowed. Possible interpretations of ≤90 days of absence:
+    ≤90 days are subtracted
+    ≤90 days are ignored
+• Previous years: ≤90 days of absence are ignored. Possible interpretations of >90 days of absence:
+    Only days exceeding 90 are subtracted
+    If absence exceeds 90 days, all absence days are subtracted
+Count starts backwards from the date of application to an officer to the date of the ARC (receipt from migration).
 By default, the form shows the earliest application date possible, but you can change it to a planned one.
-
-Addendums to M127 form are based on <a href="https://drive.google.com/file/d/1oTmu-PkwiYlrjeLkeiL2DUiDPkm9X-ww/view" target="_blank" style="color: var(--primary); text-decoration: underline;">this temlpate</a>, but you can use your own.`,
+Addendums to M127 form are based on <a href="https://drive.google.com/file/d/1oTmu-PkwiYlrjeLkeiL2DUiDPkm9X-ww/view" target="_blank" style="color: var(--primary); text-decoration: underline;">this template</a>, but you can use your own.`,
             labels: {
                 langLevel: "Application type", firstReceipt: "ARC date", appDate: "Date of M127 application",
-                lawInterp: "Type", toggleLatest: "Latest", toggleStrict: "Strict",
+                lastYear: "Year preceding application:", prevYears: "Previous years:",
+                lastYearSubtract: "≤90 days are subtracted", lastYearIgnore: "≤90 days are ignored",
+                prevYearsSimple: "Only days exceeding 90 are subtracted", prevYearsStrict: ">90 days are fully subtracted",
                 arc: "ARC №", name: "Name and Surname", mp: "MP (folder №)",
                 statementInfo: "To generate addendums to the M127 application, please provide:"
             },
@@ -43,20 +46,23 @@ Addendums to M127 form are based on <a href="https://drive.google.com/file/d/1oT
             blocks: {
                 app: "Подсчет дней", law: "Трактовка закона", trips: "Поездки", statement: "Приложения к форме M127"
             },
-            lawDesc: `Эта форма считает период пребывания на Кипре для получения гражданства по натурализации <a href="https://www.gov.cy/moi/en/documents/acquisition-of-cypriot-citizenship-by-naturalization-due-to-years-of-residence-form-m127/" target="_blank" style="color: var(--primary); text-decoration: underline;">согласно официальной информации (en)</a>, а также последним разъяснениям и интерпретациям в чате @CyLaw (<a href="https://t.me/cylaw/355929" target="_blank" style="color: var(--primary); text-decoration: underline;">например</a>), и <a href="https://cypassport.tilda.ws/days" target="_blank" style="color: var(--primary); text-decoration: underline;">сайте с информацией об ускоренной подаче</a> (не связана с автором этой страницы). 
+            lawDesc: `Эта форма считает период пребывания на Кипре для получения гражданства по натурализации <a href="https://www.gov.cy/moi/en/documents/acquisition-of-cypriot-citizenship-by-naturalization-due-to-years-of-residence-form-m127/" target="_blank" style="color: var(--primary); text-decoration: underline;">согласно официальной информации (en)</a>, а также последним разъяснениям и интерпретациям в чате @CyLaw (<a href="https://t.me/cylaw/355929" target="_blank" style="color: var(--primary); text-decoration: underline;">например</a>), и <a href="https://cypassport.tilda.ws/days" target="_blank" style="color: var(--primary); text-decoration: underline;">сайте с информацией об ускоренной подаче</a> (не связана с автором этой страницы).
 Официальной формулы расчёта нет, пожалуйста, критически оценивайте эти расчёты и полагайтесь на своё понимание.
 Логика дней отсутствия:
-• Год, предшествующий подаче: вычитается ≤90 дней, >90 дней не допускается.
-• Предыдущие годы: 
-    • Строгая трактовка: ≤90 дней не вычитаются, >90 дней - вычитаются полностью.
-    • Последняя трактовка: вычитаются только дни сверх 90 дней отсутствия.
+• Последний год перед подачей: >90 дней не допускается. Возможные интерпретации ≤90 дней отсутствия:
+    ≤90 дней вычитаются
+    ≤90 дней игнорируются
+• Предыдущие годы: ≤90 дней отсутствия игнорируются. Возможные интерпретации >90 дней отсутствия:
+    Вычитаются только дни сверх 90
+    Если отсутствие превышает 90 дней, все дни вычитаются полностью
 Отсчет идет назад от даты подачи документов офицеру до даты ARC (receipt из миграции).
 По умолчанию форма показывает самую раннюю дату подачи, но её можно поменять на планируемую.
-
 Приложения к форме M127 основаны <a href="https://drive.google.com/file/d/1oTmu-PkwiYlrjeLkeiL2DUiDPkm9X-ww/view" target="_blank" style="color: var(--primary); text-decoration: underline;">на шаблоне</a>, вы можете использовать свои.`,
             labels: {
                 langLevel: "Тип подачи", firstReceipt: "Дата ARC", appDate: "Дата подачи M127",
-                lawInterp: "Трактовка закона", toggleLatest: "Последняя", toggleStrict: "Строгая",
+                lastYear: "Последний год:", prevYears: "Предыдущие годы:",
+                lastYearSubtract: "≤90 дней вычитаются", lastYearIgnore: "≤90 дней игнорируются",
+                prevYearsSimple: "Вычитаются только дни сверх 90", prevYearsStrict: ">90 дней вычитаются полностью",
                 arc: "ARC №", name: "Имя и фамилия", mp: "MP (№ папки)",
                 statementInfo: "Для генерации приложений укажите:"
             },
@@ -66,7 +72,7 @@ Addendums to M127 form are based on <a href="https://drive.google.com/file/d/1oT
             buttons: { generate: "Сгенерировать заявления", save: "Сохранить данные", load: "Загрузить данные", clear: "Очистить всё" },
             placeholders: [ "Смотрел на снег", "Смотрел на поезда", "Распродажа WizzAir", "Ел на мамин борщ", "Сбежал от летней жары", "Полетел за Uniqlo" ],
             status: { ready: "✅ Можно подаваться!", wait: "⏳ Вам нужно минимум {target} дней для подачи", good: "☑️ Менее 90 дней", deducted: "⚠️ Отсутствие более 90 дней вычитается", fail: "❌ >90 дней отсутствия в последний год не допускается" },
-            contactDesc: "Пишите по вопросам или предложениям по улучшению. Если эта страница помогла вам сэкономить время, можете поддержать автора.",
+            contactDesc: "14/03/2026: Добавлена вторая интерпретация для последнего года перед подачей. \n Пишите по вопросам или предложениям по улучшению. Если эта страница помогла вам сэкономить время, можете поддержать автора.",
             contactBtn: "Написать",
             supportBtn: "Поддержать"
         }

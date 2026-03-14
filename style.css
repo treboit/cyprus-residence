@@ -46,6 +46,7 @@ input[type=number] { -moz-appearance: textfield; }
 .lang-switch { background: var(--flat-bg); border-radius: 20px; overflow: hidden; display: inline-flex; }
 .lang-toggle { padding: 6px 12px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-muted); }
 .lang-toggle.active { background: var(--primary); color: white; }
+.lang-toggle:not(.active) { background: #d6d6d6; }
 
 .subtitle { color: var(--text-muted); margin-top: -10px; margin-bottom: 20px; }
 .block-title { color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 5px; margin-top: 40px; }
@@ -55,6 +56,7 @@ input[type=number] { -moz-appearance: textfield; }
 .card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
 .law-box { background: var(--flat-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; line-height: 1.5; color: #424242; white-space: pre-wrap;}
 .law-box h3 { margin: 0 0 10px 0; font-size: 14px; }
+.law-box p { margin: 0; }
 
 .inputs-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; align-items: flex-end;}
 .input-group { display: flex; flex-direction: column; gap: 6px; }

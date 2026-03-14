@@ -1,11 +1,13 @@
 const app = {
     lang: 'en',
     trips: [],
+    _saving: false,
 
     init() {
         this.setLang('ru');
         this.populateLevels();
-        this.addTrip(); 
+        this.addTrip();
+        this._saving = true;
         this.loadLocal();
     },
 
@@ -27,8 +29,8 @@ const app = {
         bind('txt-statement', txt.blocks.statement);
         
         bind('lbl-langLevel', txt.labels.langLevel); bind('lbl-firstReceipt', txt.labels.firstReceipt);
-        bind('lbl-appDate', txt.labels.appDate); bind('lbl-lawInterp', txt.labels.lawInterp);
-        bind('lbl-latest', txt.labels.toggleLatest); bind('lbl-strict', txt.labels.toggleStrict);
+        bind('lbl-appDate', txt.labels.appDate);
+        bind('lbl-lastYear', txt.labels.lastYear); bind('lbl-prevYears', txt.labels.prevYears);
         bind('lbl-arc', txt.labels.arc); bind('lbl-name', txt.labels.name);
         bind('lbl-mp', txt.labels.mp); bind('txt-stateInfo', txt.labels.statementInfo);
 
@@ -49,8 +51,27 @@ const app = {
         bind('btn-support-text', txt.supportBtn);
 
         this.populateLevels();
+        this.populateLawOptions();
         this.renderTrips();
         this.updateTable();
+    },
+
+    populateLawOptions() {
+        const txt = CONFIG.text[this.lang].labels;
+
+        const lastYearSel = document.getElementById('inp-lastYear');
+        const savedLastYear = lastYearSel.value;
+        lastYearSel.innerHTML = '';
+        lastYearSel.appendChild(new Option(txt.lastYearSubtract, 'subtract'));
+        lastYearSel.appendChild(new Option(txt.lastYearIgnore, 'ignore'));
+        if (savedLastYear) lastYearSel.value = savedLastYear;
+
+        const prevYearsSel = document.getElementById('inp-prevYears');
+        const savedPrevYears = prevYearsSel.value;
+        prevYearsSel.innerHTML = '';
+        prevYearsSel.appendChild(new Option(txt.prevYearsSimple, 'simple'));
+        prevYearsSel.appendChild(new Option(txt.prevYearsStrict, 'strict'));
+        if (savedPrevYears) prevYearsSel.value = savedPrevYears;
     },
 
     populateLevels() {
@@ -75,15 +96,16 @@ const app = {
         const receiptDate = new Date(receiptDateStr);
         const lvl = document.getElementById('inp-level').value;
         const target = lvl === 'b1' ? 1460 : (lvl === 'a2' ? 1825 : 2555);
-        const isStrict = document.getElementById('inp-strict').checked;
+        const lastYearMode = document.getElementById('inp-lastYear').value || 'subtract';
+        const prevYearsMode = document.getElementById('inp-prevYears').value || 'simple';
 
         // Start testing from the mathematically earliest possible date
         let testDate = new Date(receiptDate);
-        testDate.setDate(testDate.getDate() + target - 1); 
-        
+        testDate.setDate(testDate.getDate() + target - 1);
+
         // Loop forward day by day until we find an eligible date (limit to prevent infinite loops)
         for (let i = 0; i < 7300; i++) {
-            if (this.testEligibility(testDate, receiptDate, isStrict, target)) {
+            if (this.testEligibility(testDate, receiptDate, lastYearMode, prevYearsMode, target)) {
                 document.getElementById('inp-app').value = this.formatYMD(testDate);
                 return;
             }
@@ -91,9 +113,10 @@ const app = {
         }
     },
 
-    testEligibility(appDate, limitDate, isStrict, target) {
+    testEligibility(appDate, limitDate, lastYearMode, prevYearsMode, target) {
         let currEnd = new Date(appDate);
         let totalCred = 0, periodCount = 0;
+        const isStrict = (prevYearsMode === 'strict');
 
         while (currEnd > limitDate && periodCount < 10) {
             let currStart = new Date(currEnd);
@@ -104,17 +127,18 @@ const app = {
             const pLength = this.diffDays(currStart, currEnd) + 1;
             const pAbsence = this.getAbsenceForPeriod(currStart, currEnd);
             const pCyprus = pLength - pAbsence;
-            
+
             let pCredited = 0;
             if (periodCount === 0) { // Final year rule
                 if (pAbsence > 90) return false; // Fail immediately if > 90 days away in final year
-                pCredited = pCyprus;
+                pCredited = (lastYearMode === 'ignore') ? pLength : pCyprus;
             } else {
-                if (isStrict) {
+                if (pAbsence <= 90) {
+                    pCredited = pLength;
+                } else if (isStrict) {
                     pCredited = pCyprus;
                 } else {
-                    if (pAbsence <= 90) pCredited = pLength;
-                    else pCredited = pLength - (pAbsence - 90);
+                    pCredited = pLength - (pAbsence - 90);
                 }
             }
             totalCred += pCredited;
@@ -137,7 +161,8 @@ const app = {
         this.saveLocal();
         const appDateStr = document.getElementById('inp-app').value;
         const receiptDateStr = document.getElementById('inp-receipt').value;
-        const isStrict = document.getElementById('inp-strict').checked;
+        const lastYearMode = document.getElementById('inp-lastYear').value || 'subtract';
+        const isStrict = (document.getElementById('inp-prevYears').value || 'simple') === 'strict';
         const tbody = document.getElementById('app-body');
         tbody.innerHTML = '';
 
@@ -168,17 +193,17 @@ const app = {
             let isFinalYear = (periodCount === 0);
 
             if (isFinalYear) {
-                pCredited = pCyprus;
-                if (pAbsence > 90) { rowClass = 'row-error'; statusKey = 'fail'; } 
-                else { statusKey = 'good'; }
+                if (pAbsence > 90) { rowClass = 'row-error'; statusKey = 'fail'; pCredited = pCyprus; }
+                else {
+                    pCredited = (lastYearMode === 'ignore') ? pLength : pCyprus;
+                    statusKey = 'good';
+                }
             } else {
-                if (isStrict) {
-                    pCredited = pCyprus;
-                    if(pAbsence > 90) { rowClass = 'row-warning'; statusKey = 'deducted'; } 
-                    else { statusKey = 'good'; }
+                if (pAbsence <= 90) {
+                    pCredited = pLength; statusKey = 'good';
                 } else {
-                    if (pAbsence <= 90) { pCredited = pLength; statusKey = 'good'; } 
-                    else { pCredited = pLength - (pAbsence - 90); rowClass = 'row-warning'; statusKey = 'deducted'; }
+                    rowClass = 'row-warning'; statusKey = 'deducted';
+                    pCredited = isStrict ? pCyprus : pLength - (pAbsence - 90);
                 }
             }
 
@@ -291,11 +316,13 @@ const app = {
     },
 
     saveLocal() {
+        if (!this._saving) return;
         const data = {
             level: document.getElementById('inp-level').value,
             receipt: document.getElementById('inp-receipt').value,
             app: document.getElementById('inp-app').value,
-            strict: document.getElementById('inp-strict').checked,
+            lastYearMode: document.getElementById('inp-lastYear').value,
+            prevYearsMode: document.getElementById('inp-prevYears').value,
             arc: document.getElementById('inp-arc').value,
             name: document.getElementById('inp-name').value,
             mp: document.getElementById('inp-mp').value,
@@ -310,7 +337,9 @@ const app = {
             if(data.level) document.getElementById('inp-level').value = data.level;
             if(data.receipt) document.getElementById('inp-receipt').value = data.receipt;
             if(data.app) document.getElementById('inp-app').value = data.app;
-            if(data.strict !== undefined) document.getElementById('inp-strict').checked = data.strict;
+            if(data.lastYearMode) document.getElementById('inp-lastYear').value = data.lastYearMode;
+            if(data.prevYearsMode) document.getElementById('inp-prevYears').value = data.prevYearsMode;
+            else if(data.strict !== undefined) document.getElementById('inp-prevYears').value = data.strict ? 'strict' : 'simple';
             if(data.arc) document.getElementById('inp-arc').value = data.arc;
             if(data.name) document.getElementById('inp-name').value = data.name;
             if(data.mp) document.getElementById('inp-mp').value = data.mp;
@@ -332,7 +361,8 @@ const app = {
         csv += `Level,${document.getElementById('inp-level').value}\n`;
         csv += `Receipt,${document.getElementById('inp-receipt').value}\n`;
         csv += `AppDate,${document.getElementById('inp-app').value}\n`;
-        csv += `Strict,${document.getElementById('inp-strict').checked}\n`;
+        csv += `LastYearMode,${document.getElementById('inp-lastYear').value}\n`;
+        csv += `PrevYearsMode,${document.getElementById('inp-prevYears').value}\n`;
         csv += `ARC,${document.getElementById('inp-arc').value}\n`;
         csv += `Name,${document.getElementById('inp-name').value}\n`;
         csv += `MP,${document.getElementById('inp-mp').value}\n`;
@@ -357,7 +387,9 @@ const app = {
                     if(cols[0]==='Level') document.getElementById('inp-level').value = cols[1];
                     if(cols[0]==='Receipt') document.getElementById('inp-receipt').value = cols[1];
                     if(cols[0]==='AppDate') document.getElementById('inp-app').value = cols[1];
-                    if(cols[0]==='Strict') document.getElementById('inp-strict').checked = (cols[1] === 'true');
+                    if(cols[0]==='LastYearMode') document.getElementById('inp-lastYear').value = cols[1];
+                    if(cols[0]==='PrevYearsMode') document.getElementById('inp-prevYears').value = cols[1];
+                    if(cols[0]==='Strict') document.getElementById('inp-prevYears').value = (cols[1] === 'true') ? 'strict' : 'simple';
                     if(cols[0]==='ARC') document.getElementById('inp-arc').value = cols[1];
                     if(cols[0]==='Name') document.getElementById('inp-name').value = cols[1];
                     if(cols[0]==='MP') document.getElementById('inp-mp').value = cols[1];
@@ -365,7 +397,7 @@ const app = {
                     this.trips.push({ id: Date.now()+Math.random(), name: cols[0]||'', dep: cols[1]||'', dPass: cols[2]||'', dStamp: cols[3]||'', ret: cols[4]||'', rPass: cols[5]||'', rStamp: cols[6]||'' });
                 }
             });
-            this.renderTrips(); this.updateTable(); alert('Data loaded successfully!'); input.value = '';
+            this.renderTrips(); this.updateTable(); input.value = '';
         };
         reader.readAsText(file);
     },

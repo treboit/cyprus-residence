@@ -42,16 +42,13 @@
                         <label id="lbl-appDate"></label>
                         <input type="date" id="inp-app" onchange="app.updateTable()">
                     </div>
-                    <div class="input-group">
-                        <label id="lbl-lawInterp">Law interpretation</label>
-                        <div class="toggle-container">
-                            <span id="lbl-latest">Latest</span>
-                            <label class="switch">
-                                <input type="checkbox" id="inp-strict" onchange="app.calculate()">
-                                <span class="slider"></span>
-                            </label>
-                            <span id="lbl-strict">Strict</span>
-                        </div>
+                    <div class="input-group editable">
+                        <label id="lbl-lastYear"></label>
+                        <select id="inp-lastYear" onchange="app.calculate()"></select>
+                    </div>
+                    <div class="input-group editable">
+                        <label id="lbl-prevYears"></label>
+                        <select id="inp-prevYears" onchange="app.calculate()"></select>
                     </div>
                 </div>
 
