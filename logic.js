@@ -2,6 +2,13 @@ const app = {
     lang: 'en',
     trips: [],
     _saving: false,
+    _calcTracked: false,
+    _tripTracked: false,
+
+    track(event, data) {
+        if (!this._saving) return;
+        if (typeof umami !== 'undefined') umami.track(event, data);
+    },
 
     init() {
         this.setLang('ru');
@@ -54,6 +61,7 @@ const app = {
         this.populateLawOptions();
         this.renderTrips();
         this.updateTable();
+        this.track('lang_switch', { lang: l });
     },
 
     populateLawOptions() {
@@ -174,6 +182,11 @@ const app = {
             return;
         }
 
+        if (!this._calcTracked) {
+            this._calcTracked = true;
+            this.track('calculator_used');
+        }
+
         let currEnd = new Date(appDateStr);
         const limitDate = new Date(receiptDateStr);
         let totalAbs = 0, totalCy = 0, totalCred = 0, periodCount = 0;
@@ -268,6 +281,10 @@ const app = {
         if (field === 'dPass' && !trip.rPass) trip.rPass = val;
         if (field === 'rPass' && idx < this.trips.length - 1 && !this.trips[idx+1].dPass) this.trips[idx+1].dPass = val;
 
+        if (!this._tripTracked && this.trips.some(t => t.dep && t.ret)) {
+            this._tripTracked = true;
+            this.track('trip_added');
+        }
         this.renderTrips();
         this.calculate();
     },
@@ -350,6 +367,9 @@ const app = {
     },
     clearAll() {
         if(!confirm('Are you sure you want to clear all data?')) return;
+        this.track('clear_all');
+        this._calcTracked = false;
+        this._tripTracked = false;
         localStorage.removeItem('cyprus_calc');
         document.querySelectorAll('input:not([type="checkbox"])').forEach(i => i.value = '');
         this.trips = [];
@@ -368,6 +388,7 @@ const app = {
         csv += `MP,${document.getElementById('inp-mp').value}\n`;
         csv += "\nTrip,DepDate,DepPass,DepStamp,RetDate,RetPass,RetStamp\n";
         this.trips.forEach(t => { csv += `${t.name||''},${t.dep||''},${t.dPass||''},${t.dStamp||''},${t.ret||''},${t.rPass||''},${t.rStamp||''}\n`; });
+        this.track('save_csv');
         const a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
         a.download = 'M127_Calculator_Backup.csv';
@@ -397,6 +418,7 @@ const app = {
                     this.trips.push({ id: Date.now()+Math.random(), name: cols[0]||'', dep: cols[1]||'', dPass: cols[2]||'', dStamp: cols[3]||'', ret: cols[4]||'', rPass: cols[5]||'', rStamp: cols[6]||'' });
                 }
             });
+            this.track('load_csv');
             this.renderTrips(); this.updateTable(); input.value = '';
         };
         reader.readAsText(file);
@@ -416,6 +438,7 @@ const app = {
         const appDateStr = document.getElementById('inp-app').value;
         if (!receiptStr || !appDateStr) { alert("Please fill First receipt date and Application date first."); return; }
 
+        this.track('generate_statements');
         const name = document.getElementById('inp-name').value || "YOUR NAME AND SURNAME";
         const appDate = new Date(appDateStr);
         const mp = document.getElementById('inp-mp').value || ".......";

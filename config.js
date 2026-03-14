@@ -34,7 +34,7 @@ Addendums to M127 form are based on <a href="https://drive.google.com/file/d/1oT
             buttons: { generate: "Generate statements", save: "Save data", load: "Load data", clear: "Clear all" },
             placeholders: [ "Went to see snow", "Went to see trains", "Couldn't resist a WizzAir sale", "Ate mom's borsch", "Escaped the summer heat", "Went for Uniqlo shopping" ],
             status: { ready: "✅ You can apply!", wait: "⏳ You need at least {target} days to apply", good: "☑️ Less than 90 days", deducted: "⚠️ Absence of more than 90 days is deducted", fail: "❌ >90 absence days in final year not allowed" },
-            contactDesc: "Please write your questions and suggestions. If this page saved your time, you can support the author.",
+            contactDesc: "14/03/2026: Added 2nd Interpretation of the last year, and analytics. \n Please write your questions and suggestions. If this page saved your time, you can support the author.",
             contactBtn: "Contact",
             supportBtn: "Support"
         },
@@ -72,7 +72,7 @@ Addendums to M127 form are based on <a href="https://drive.google.com/file/d/1oT
             buttons: { generate: "Сгенерировать заявления", save: "Сохранить данные", load: "Загрузить данные", clear: "Очистить всё" },
             placeholders: [ "Смотрел на снег", "Смотрел на поезда", "Распродажа WizzAir", "Ел на мамин борщ", "Сбежал от летней жары", "Полетел за Uniqlo" ],
             status: { ready: "✅ Можно подаваться!", wait: "⏳ Вам нужно минимум {target} дней для подачи", good: "☑️ Менее 90 дней", deducted: "⚠️ Отсутствие более 90 дней вычитается", fail: "❌ >90 дней отсутствия в последний год не допускается" },
-            contactDesc: "14/03/2026: Добавлена вторая интерпретация для последнего года перед подачей. \n Пишите по вопросам или предложениям по улучшению. Если эта страница помогла вам сэкономить время, можете поддержать автора.",
+            contactDesc: "14/03/2026: Добавлена вторая интерпретация для последнего года перед подачей и аналитика. \n Пишите по вопросам или предложениям по улучшению. Если эта страница помогла вам сэкономить время, можете поддержать автора.",
             contactBtn: "Написать",
             supportBtn: "Поддержать"
         }
